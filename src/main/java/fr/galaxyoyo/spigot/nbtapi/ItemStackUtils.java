@@ -76,7 +76,7 @@ public class ItemStackUtils
 	 */
 	public static List<Material> getCanDestroy(ItemStack stack)
 	{
-		TagCompound tag = getTagCompound(stack);
+		TagCompound tag = getTagCompound(stack, false);
 		TagList list = tag.getList("CanDestroy");
 		if (list == null)
 			return Lists.newArrayList();
@@ -118,7 +118,6 @@ public class ItemStackUtils
 		if (tag == null)
 			tag = new TagCompound();
 		tag.setList("CanDestroy", new TagList(ids));
-		setTagCompound(stack, tag);
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class ItemStackUtils
 	 */
 	public static List<Material> getCanPlaceOn(ItemStack stack)
 	{
-		TagCompound tag = getTagCompound(stack);
+		TagCompound tag = getTagCompound(stack, false);
 		TagList list = tag.getList("CanPlaceOn");
 		if (list == null)
 			return Lists.newArrayList();
@@ -161,6 +160,5 @@ public class ItemStackUtils
 		if (tag == null)
 			tag = new TagCompound();
 		tag.setList("CanPlaceOn", new TagList(ids));
-		setTagCompound(stack, tag);
 	}
 }

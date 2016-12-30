@@ -44,7 +44,7 @@ public class EntityUtils {
      */
     public static Map<EntityAttributes, Double> getAllAttributes(Entity e) {
         Map<EntityAttributes, Double> map = Maps.newHashMap();
-        TagCompound tag = getTagCompound(e);
+        TagCompound tag = getTagCompound(e, false);
         TagList attributesTag = tag.getList("Attributes");
         if (attributesTag == null)
             attributesTag = new TagList();
@@ -82,7 +82,6 @@ public class EntityUtils {
             attributesTag.add(attributeTag);
         }
         tag.setList("Attributes", attributesTag);
-        setTagCompound(e, tag);
     }
 
 	/**
