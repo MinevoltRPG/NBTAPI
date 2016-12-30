@@ -1,19 +1,28 @@
 package fr.galaxyoyo.spigot.nbtapi;
 
 import org.apache.commons.lang3.Validate;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Set;
 
 import static fr.galaxyoyo.spigot.nbtapi.ReflectionUtils.*;
 
-@SuppressWarnings({"SameParameterValue", "unused"})
 public class TagCompound extends HashMap<String, Object> {
-    public static TagCompound fromNMS(Object o) {
+	private Object owner;
+
+	public static TagCompound fromNMS(Object nms) {
+		return fromNMS(nms, null);
+	}
+
+    protected static TagCompound fromNMS(Object o, Object owner) {
         if (o == null)
             return null;
+
         Validate.isTrue(o.getClass().getSimpleName().equalsIgnoreCase("NBTTagCompound"), "Only a NBTTagCompound can be transformed into a TagCompound");
         TagCompound tag = new TagCompound();
+        tag.owner = owner;
         Set<String> keys = invokeNMSMethod("c", o);
         for (String key : keys) {
             Object base = invokeNMSMethod("get", o, new Class<?>[]{String.class}, key);
@@ -86,7 +95,22 @@ public class TagCompound extends HashMap<String, Object> {
         put(key, null);
     }
 
-    @Override
+	@Override
+	public Object put(String key, Object value)
+	{
+		Object ret = super.put(key, value);
+
+		if (owner != null) {
+			if (owner instanceof ItemStack)
+				ItemStackUtils.setTagCompound((ItemStack) owner, this);
+			else if (owner instanceof Entity)
+				EntityUtils.setTagCompound((Entity) owner, this);
+		}
+
+		return ret;
+	}
+
+	@Override
     public Object get(Object key) {
         return super.get(key);
     }

@@ -1,7 +1,6 @@
 package fr.galaxyoyo.spigot.nbtapi;
 
 import com.google.common.collect.Maps;
-import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.entity.Entity;
 
@@ -11,14 +10,28 @@ import java.util.Map;
 import static fr.galaxyoyo.spigot.nbtapi.ReflectionUtils.*;
 
 public class EntityUtils {
+	/**
+	 * Get the transformed TagCompound from the entity, with auto-updating
+	 */
     public static TagCompound getTagCompound(Entity e) {
+    	return getTagCompound(e, true);
+	}
+
+	/**
+	 * Get the transformed TagCompound from the entity. If the parameter update equals true, every modification will be automatically updated. Don't use this if
+	 * you want to do multiple modifications in one use, because it can generate some lags
+	 */
+    public static TagCompound getTagCompound(Entity e, boolean update) {
         Object nmsEntity = invokeBukkitMethod("getHandle", e);
         Object nbt = newNMS("NBTTagCompound");
         invokeNMSMethod("b", nmsEntity, new Class<?>[]{getNMSClass("NBTTagCompound")}, nbt);
-        return TagCompound.fromNMS(nbt);
+        return TagCompound.fromNMS(nbt, update ? e : null);
     }
 
-    public static void setTagCompound(Entity e, TagCompound tag) {
+	/**
+	 * Update the NBTTagCompound of the targetted entity
+	 */
+	public static void setTagCompound(Entity e, TagCompound tag) {
         Object nmsEntity = invokeBukkitMethod("getHandle", e);
         Object nbt = tag.convertToNMS();
         invokeNMSMethod("a", nmsEntity, new Class<?>[]{getNMSClass("NBTTagCompound")}, nbt);
@@ -44,12 +57,18 @@ public class EntityUtils {
         return map;
     }
 
+	/**
+	 * Get the specified attribute of targetted entity
+	 */
     public static double getAttribute(Entity e, EntityAttributes attributes)
     {
         return getAllAttributes(e).getOrDefault(attributes, attributes.getDefaultValue());
     }
 
-    public static void setAllAttributes(Entity e, Map<EntityAttributes, Double> allAttributes)
+	/**
+	 * Set all attributes for one entity
+	 */
+	public static void setAllAttributes(Entity e, Map<EntityAttributes, Double> allAttributes)
     {
         TagCompound tag = getTagCompound(e);
         TagList attributesTag = new TagList();
@@ -66,6 +85,9 @@ public class EntityUtils {
         setTagCompound(e, tag);
     }
 
+	/**
+	 * Set one attribute for one targetted entity
+	 */
     public static void setAttribute(Entity e, EntityAttributes attributes, double value)
     {
         Map<EntityAttributes, Double> map = getAllAttributes(e);
@@ -73,7 +95,10 @@ public class EntityUtils {
         setAllAttributes(e, map);
     }
 
-    public enum EntityAttributes {
+	/**
+	 * All entity attributes (update: 1.11)
+	 */
+	public enum EntityAttributes {
         /**
          * The maximum health of this mob (in half-hearts); determines the highest health they may be healed to.
          */

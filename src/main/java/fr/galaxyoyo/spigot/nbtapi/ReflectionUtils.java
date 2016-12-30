@@ -2,14 +2,25 @@ package fr.galaxyoyo.spigot.nbtapi;
 
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_10_R1.util.LongHashSet;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 public class ReflectionUtils {
     private static final String SERVER_VERSION = Bukkit.getServer().getClass().getName().split("\\.")[3];
+
+    static {
+        if (!Pattern.matches("1\\.(8|9|10|11)", SERVER_VERSION))
+		{
+			System.out.println("[NBTAPI] ***********************************************************************************************************");
+			System.out.println("[NBTAPI] Warning: You're running Bukkit " + SERVER_VERSION + ". Known supported versions are 1.8, 1.9, 1.10 and 1.11.");
+			System.out.println("[NBTAPI] The API may not work.");
+			System.out.println("[NBTAPI] Please don't leave any error message.");
+			System.out.println("[NBTAPI] ***********************************************************************************************************");
+		}
+    }
 
     public static <T> T invokeNMSStaticMethod(String className, String method, Class<?>[] parameterClasses, Object... params) {
         return invokeNMSMethod(className, method, null, parameterClasses, (Object[]) params);
