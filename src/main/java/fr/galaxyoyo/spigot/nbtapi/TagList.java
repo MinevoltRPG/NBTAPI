@@ -23,7 +23,7 @@ public class TagList extends ArrayList<Object> {
 
     public static TagList fromNMS(Object nbt) {
         if (nbt == null)
-            return null;
+            return new TagList();
         Validate.isTrue(nbt.getClass().getSimpleName().equalsIgnoreCase("NBTTagList"), "Only a NBTTagList can be transformed into a TagList");
         TagList tag = new TagList();
         List<?> list = getNMSField(nbt, "list");

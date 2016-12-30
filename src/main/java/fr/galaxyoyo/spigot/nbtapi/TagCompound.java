@@ -4,25 +4,33 @@ import org.apache.commons.lang3.Validate;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Set;
 
 import static fr.galaxyoyo.spigot.nbtapi.ReflectionUtils.*;
 
 public class TagCompound extends HashMap<String, Object> {
-	private Object owner;
+	private final Object owner;
+
+	public TagCompound() {
+		this (null);
+	}
+
+	public TagCompound(@Nullable Object owner) {
+		this.owner = owner;
+	}
 
 	public static TagCompound fromNMS(Object nms) {
 		return fromNMS(nms, null);
 	}
 
-    protected static TagCompound fromNMS(Object o, Object owner) {
+    protected static TagCompound fromNMS(Object o, @Nullable Object owner) {
         if (o == null)
-            return null;
+            return new TagCompound(owner);
 
         Validate.isTrue(o.getClass().getSimpleName().equalsIgnoreCase("NBTTagCompound"), "Only a NBTTagCompound can be transformed into a TagCompound");
-        TagCompound tag = new TagCompound();
-        tag.owner = owner;
+        TagCompound tag = new TagCompound(owner);
         Set<String> keys = invokeNMSMethod("c", o);
         for (String key : keys) {
             Object base = invokeNMSMethod("get", o, new Class<?>[]{String.class}, key);

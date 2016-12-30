@@ -12,7 +12,7 @@ public class ReflectionUtils {
     private static final String SERVER_VERSION = Bukkit.getServer().getClass().getName().split("\\.")[3];
 
     static {
-        if (!Pattern.matches("1\\.(8|9|10|11)", SERVER_VERSION))
+        if (!Pattern.matches("v1_(8|9|10|11)_R\\d", SERVER_VERSION))
 		{
 			System.out.println("[NBTAPI] ***********************************************************************************************************");
 			System.out.println("[NBTAPI] Warning: You're running Bukkit " + SERVER_VERSION + ". Known supported versions are 1.8, 1.9, 1.10 and 1.11.");
@@ -41,10 +41,12 @@ public class ReflectionUtils {
     }
 
     public static <T> T invokeNMSMethod(String method, Object invoker, Class<?>[] parameterClasses, Object... params) {
+		Validate.isTrue(invoker != null, "Invoker cannot be null");
         return invokeNMSMethod(invoker.getClass().getSimpleName(), method, invoker, parameterClasses, (Object[]) params);
     }
 
     public static <T> T invokeNMSMethod(String method, Object invoker) {
+    	Validate.isTrue(invoker != null, "Invoker cannot be null");
         return invokeNMSMethod(method, invoker, new Class<?>[0]);
     }
 

@@ -7,7 +7,7 @@ sourceCompatibility = 1.8
 
 group = 'fr.galaxyoyo'
 archivesBaseName = 'NBTAPI'
-version = '1.0.6'
+version = '1.0.7'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -39,7 +39,7 @@ configurations {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile 'org.spigotmc:spigot:1.11-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot:1.11.2-R0.1-SNAPSHOT'
     included 'org.mcstats.bukkit:metrics:R8-SNAPSHOT'
 }
 
@@ -71,6 +71,10 @@ publishing {
             url "$buildDir/repo"
         }
     }
+}
+
+test {
+    workingDir = new File("test")
 }
 
 publish.dependsOn fatjar
