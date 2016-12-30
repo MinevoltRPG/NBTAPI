@@ -1,0 +1,77 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = 1.8
+
+group = 'fr.galaxyoyo'
+archivesBaseName = 'NBTAPI'
+version = '1.0.5'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Zip) { task ->
+    task.doLast {
+        ant.checksum file: it.archivePath
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url 'http://repo.dmulloy2.net/content/groups/public/'
+    }
+    maven {
+        url 'http://repo.mcstats.org/content/repositories/public/'
+    }
+}
+
+//noinspection GroovyAssignabilityCheck
+configurations {
+    included
+    //noinspection GroovyAssignabilityCheck
+    compile.extendsFrom included
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'org.spigotmc:spigot:1.11-R0.1-SNAPSHOT'
+    included 'org.mcstats.bukkit:metrics:R8-SNAPSHOT'
+}
+
+task fatjar(type: Jar) {
+    baseName = archivesBaseName
+
+    from {
+        //noinspection GroovyAssignabilityCheck
+        configurations.included.collect {
+            it.isDirectory() ? it : zipTree(it).matching { exclude { it.toString().contains('META-INF') && it.toString() != "META-INF" } }
+        }
+    }
+    with jar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId group
+            artifactId archivesBaseName.toLowerCase()
+            version = version
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}
+
+publish.dependsOn fatjar
+fatjar.dependsOn jar
